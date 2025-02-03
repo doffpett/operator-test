@@ -45,7 +45,7 @@
       overflow: hidden;
       transition: background 0.3s ease;
     }
-    /* Knappen – gjort større og mer iøynefallende */
+    /* Hovedknappen – gjort større og mer iøynefallende */
     #flyttKnapp {
       position: absolute;
       width: 140px;
@@ -63,8 +63,26 @@
       transform: scale(1.1);
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
-    /* Telleren – enda tydeligere med større tekst og kontrast */
-    #teller {
+    /* Feil-knappen – den man IKKE skal trykke på */
+    #feilKnapp {
+      position: absolute;
+      width: 140px;
+      height: 80px;
+      background-color: #B71C1C;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    #feilKnapp:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    /* Resultattavle – viser antall riktige og feil */
+    #resultat {
       position: absolute;
       top: 20px;
       right: 20px;
@@ -93,7 +111,7 @@
   <main>
     <div id="spillomrade">
       <button id="flyttKnapp">Klikk meg!</button>
-      <div id="teller">Antall klikk: 0</div>
+      <div id="resultat">Rett: 0 | Feil: 0</div>
     </div>
   </main>
   <footer>
@@ -104,11 +122,13 @@
     // Hent elementene
     const spillomrade = document.getElementById('spillomrade');
     const flyttKnapp = document.getElementById('flyttKnapp');
-    const tellerDiv = document.getElementById('teller');
+    const resultatDiv = document.getElementById('resultat');
 
-    let antallKlikk = 0;
+    // Tellevariabler
+    let correctClicks = 0;
+    let incorrectClicks = 0;
     
-    // Definer oversettelser for knappen
+    // Språk- og designvarianter for hovedknappen (samme som før)
     const oversettelser = [
       { språk: "no", tekst: "Klikk meg!" },
       { språk: "en", tekst: "Click me!" },
@@ -118,7 +138,6 @@
     ];
     let språkIndex = 0;
     
-    // Definer designvarianter for knapp og spillområde
     const designVarianter = [
       { buttonColor: "#2c8a39", background: "linear-gradient(135deg, #e0eafc, #cfdef3)" },
       { buttonColor: "#D32F2F", background: "linear-gradient(135deg, #ffe0b2, #ffcc80)" },
@@ -128,41 +147,86 @@
     ];
     let designIndex = 0;
 
-    // Funksjon som oppdaterer telleren, knappen sin posisjon, språk og design
-    function flyttKnappen() {
-      // Øk antall klikk og oppdater telleren
-      antallKlikk++;
-      tellerDiv.textContent = "Antall klikk: " + antallKlikk;
+    // Oppdater resultattavlen
+    function oppdaterResultat() {
+      resultatDiv.textContent = `Rett: ${correctClicks} | Feil: ${incorrectClicks}`;
+    }
 
-      // Hent dimensjonene til spillområdet og knappen
+    // Flytter hovedknappen, bytter språk/design og oppdaterer riktig-telleren
+    function flyttKnappen() {
+      // Øk korrekt-teller
+      correctClicks++;
+      oppdaterResultat();
+
+      // Flytt hovedknappen til en tilfeldig posisjon
       const omradeBredde = spillomrade.offsetWidth;
       const omradeHoyde = spillomrade.offsetHeight;
       const knappBredde = flyttKnapp.offsetWidth;
       const knappHoyde = flyttKnapp.offsetHeight;
-
-      // Kalkuler maksimale x- og y-koordinater slik at knappen holder seg innenfor området
       const maxX = omradeBredde - knappBredde;
       const maxY = omradeHoyde - knappHoyde;
-
-      // Generer tilfeldige posisjoner
       const randomX = Math.floor(Math.random() * (maxX + 1));
       const randomY = Math.floor(Math.random() * (maxY + 1));
-
-      // Oppdater knappens posisjon
       flyttKnapp.style.left = randomX + 'px';
       flyttKnapp.style.top = randomY + 'px';
 
-      // Oppdater språk: Bytt til neste oversettelse
+      // Bytt språk
       språkIndex = (språkIndex + 1) % oversettelser.length;
       flyttKnapp.textContent = oversettelser[språkIndex].tekst;
 
-      // Oppdater design: Bytt til neste designvariant
+      // Bytt design
       designIndex = (designIndex + 1) % designVarianter.length;
       flyttKnapp.style.backgroundColor = designVarianter[designIndex].buttonColor;
       spillomrade.style.background = designVarianter[designIndex].background;
+
+      // Med 30% sjanse, vis en "IKKE KLIKK MEG!"-knapp
+      if (Math.random() < 0.3 && !document.getElementById('feilKnapp')) {
+        spawnFeilKnapp();
+      }
     }
 
-    // Legg til event listener for knappens klikk
+    // Funksjon for å opprette og vise feilknappen ("IKKE KLIKK MEG!")
+    function spawnFeilKnapp() {
+      const feilKnapp = document.createElement('button');
+      feilKnapp.id = 'feilKnapp';
+      feilKnapp.textContent = "IKKE KLIKK MEG!";
+      
+      // Sett stil og posisjon liknende som hovedknappen, men plassert tilfeldig
+      const knappBredde = 140;
+      const knappHoyde = 80;
+      const omradeBredde = spillomrade.offsetWidth;
+      const omradeHoyde = spillomrade.offsetHeight;
+      const maxX = omradeBredde - knappBredde;
+      const maxY = omradeHoyde - knappHoyde;
+      const randomX = Math.floor(Math.random() * (maxX + 1));
+      const randomY = Math.floor(Math.random() * (maxY + 1));
+      feilKnapp.style.position = "absolute";
+      feilKnapp.style.left = randomX + "px";
+      feilKnapp.style.top = randomY + "px";
+      // Feilknappen får en rød bakgrunn (definert i CSS)
+      
+      spillomrade.appendChild(feilKnapp);
+
+      // Sett en timeout for at knappen skal forsvinne etter 3 sekunder hvis den ikke blir trykket på
+      const fjernTimeout = setTimeout(() => {
+        if (spillomrade.contains(feilKnapp)) {
+          spillomrade.removeChild(feilKnapp);
+        }
+      }, 3000);
+
+      // Legg til event listener slik at dersom brukeren trykker på den, økes feil-telleren
+      feilKnapp.addEventListener('click', function() {
+        // Forhindre at timeout fjerner knappen etterpå
+        clearTimeout(fjernTimeout);
+        incorrectClicks++;
+        oppdaterResultat();
+        if (spillomrade.contains(feilKnapp)) {
+          spillomrade.removeChild(feilKnapp);
+        }
+      });
+    }
+
+    // Legg til event listener for hovedknappen
     flyttKnapp.addEventListener('click', flyttKnappen);
   </script>
 </body>
