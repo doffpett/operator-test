@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Avo Consulting – Flyttende Knapp Spillet</title>
+  <!-- Bruker Google Fonts for et moderne utseende -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Grunnleggende stil for hele siden */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    /* Header med Avo Consulting branding */
+    header {
+      background-color: #004080; /* Mørk blå farge */
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 500;
+    }
+
+    /* Hovedinnholdet med spillområdet */
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    /* Spillområdet med en gradient bakgrunn, ramme og avrundede hjørner */
+    #spillomrade {
+      position: relative;
+      width: 800px;
+      height: 600px;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
+      border: 2px solid #004080;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Stilen for knappen */
+    #flyttKnapp {
+      position: absolute;
+      width: 120px;
+      height: 60px;
+      background-color: #2c8a39; /* En frisk grønnfarge */
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    #flyttKnapp:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Telleren plassert i øvre høyre hjørne av spillområdet */
+    #teller {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+
+    /* Enkel footer */
+    footer {
+      text-align: center;
+      padding: 10px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Avo Consulting</h1>
+  </header>
+  <main>
+    <div id="spillomrade">
+      <button id="flyttKnapp">Klikk meg!</button>
+      <div id="teller">Antall klikk: 0</div>
+    </div>
+  </main>
+  <footer>
+    &copy; 2025 Avo Consulting. Alle rettigheter reservert.
+  </footer>
+
+  <script>
+    // Hent elementene fra DOM
+    const spillomrade = document.getElementById('spillomrade');
+    const flyttKnapp = document.getElementById('flyttKnapp');
+    const tellerDiv = document.getElementById('teller');
+
+    let antallKlikk = 0;
+
+    // Funksjon for å flytte knappen til en ny, tilfeldig posisjon
+    function flyttKnappen() {
+      antallKlikk++;
+      tellerDiv.textContent = "Antall klikk: " + antallKlikk;
+
+      // Hent dimensjonene til spillområdet og knappen
+      const omradeBredde = spillomrade.offsetWidth;
+      const omradeHoyde = spillomrade.offsetHeight;
+      const knappBredde = flyttKnapp.offsetWidth;
+      const knappHoyde = flyttKnapp.offsetHeight;
+
+      // Kalkuler maksimale x- og y-koordinater for at knappen skal holde seg innenfor området
+      const maxX = omradeBredde - knappBredde;
+      const maxY = omradeHoyde - knappHoyde;
+
+      // Generer tilfeldige posisjoner
+      const randomX = Math.floor(Math.random() * (maxX + 1));
+      const randomY = Math.floor(Math.random() * (maxY + 1));
+
+      // Oppdater knappens posisjon
+      flyttKnapp.style.left = randomX + 'px';
+      flyttKnapp.style.top = randomY + 'px';
+    }
+
+    // Legg til event listener for knappens klikk
+    flyttKnapp.addEventListener('click', flyttKnappen);
+  </script>
+</body>
+</html>
