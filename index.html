@@ -43,6 +43,7 @@
       border-radius: 10px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       overflow: hidden;
+      transition: background 0.3s ease;
     }
     /* Knappen – gjort større og mer iøynefallende */
     #flyttKnapp {
@@ -56,7 +57,7 @@
       font-weight: bold;
       border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     }
     #flyttKnapp:hover {
       transform: scale(1.1);
@@ -106,27 +107,62 @@
     const tellerDiv = document.getElementById('teller');
 
     let antallKlikk = 0;
+    
+    // Definer oversettelser for knappen
+    const oversettelser = [
+      { språk: "no", tekst: "Klikk meg!" },
+      { språk: "en", tekst: "Click me!" },
+      { språk: "fr", tekst: "Cliquez-moi!" },
+      { språk: "de", tekst: "Klick mich!" },
+      { språk: "es", tekst: "¡Haz clic!" }
+    ];
+    let språkIndex = 0;
+    
+    // Definer designvarianter for knapp og spillområde
+    const designVarianter = [
+      { buttonColor: "#2c8a39", background: "linear-gradient(135deg, #e0eafc, #cfdef3)" },
+      { buttonColor: "#D32F2F", background: "linear-gradient(135deg, #ffe0b2, #ffcc80)" },
+      { buttonColor: "#1976D2", background: "linear-gradient(135deg, #bbdefb, #90caf9)" },
+      { buttonColor: "#388E3C", background: "linear-gradient(135deg, #c8e6c9, #a5d6a7)" },
+      { buttonColor: "#FBC02D", background: "linear-gradient(135deg, #fff9c4, #fff176)" }
+    ];
+    let designIndex = 0;
 
-    // Funksjon som oppdaterer telleren og flytter knappen til en ny, tilfeldig posisjon
+    // Funksjon som oppdaterer telleren, knappen sin posisjon, språk og design
     function flyttKnappen() {
+      // Øk antall klikk og oppdater telleren
       antallKlikk++;
       tellerDiv.textContent = "Antall klikk: " + antallKlikk;
 
+      // Hent dimensjonene til spillområdet og knappen
       const omradeBredde = spillomrade.offsetWidth;
       const omradeHoyde = spillomrade.offsetHeight;
       const knappBredde = flyttKnapp.offsetWidth;
       const knappHoyde = flyttKnapp.offsetHeight;
 
+      // Kalkuler maksimale x- og y-koordinater slik at knappen holder seg innenfor området
       const maxX = omradeBredde - knappBredde;
       const maxY = omradeHoyde - knappHoyde;
 
+      // Generer tilfeldige posisjoner
       const randomX = Math.floor(Math.random() * (maxX + 1));
       const randomY = Math.floor(Math.random() * (maxY + 1));
 
+      // Oppdater knappens posisjon
       flyttKnapp.style.left = randomX + 'px';
       flyttKnapp.style.top = randomY + 'px';
+
+      // Oppdater språk: Bytt til neste oversettelse
+      språkIndex = (språkIndex + 1) % oversettelser.length;
+      flyttKnapp.textContent = oversettelser[språkIndex].tekst;
+
+      // Oppdater design: Bytt til neste designvariant
+      designIndex = (designIndex + 1) % designVarianter.length;
+      flyttKnapp.style.backgroundColor = designVarianter[designIndex].buttonColor;
+      spillomrade.style.background = designVarianter[designIndex].background;
     }
 
+    // Legg til event listener for knappens klikk
     flyttKnapp.addEventListener('click', flyttKnappen);
   </script>
 </body>
